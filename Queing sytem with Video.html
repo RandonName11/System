@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Queue Machine</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      text-align: center;
+      margin: 0;
+      padding: 0;
+      background-image: url(Bg3.jpg);
+      background-position: center;
+      background-size: cover;	
+      background-repeat: no-repeat;
+      background-color: #87BEEB; /* Specify the background color here */
+    }
+    .container {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+    .queue-section {
+      text-align: left;
+      margin-right: 20px;
+    }
+    h1 {
+      color: black;
+      font-size: 150px;
+      margin-bottom: 10px;
+    }
+    h2 {
+      color: black;
+      font-size: 250px;
+      border: 5px solid black;
+      padding: 10px;
+      margin: 10px;
+      display: inline-block;
+    }
+    .section {
+      margin-bottom: 20px;
+    }
+    .now-serving {
+      font-size: 150px;
+      color: black;
+      border: none; /* Remove the border */
+    }
+    .highlight {
+      background-color: #88FF0C;
+      transition: all 0.3s;
+    }
+    video {
+      width: 1880px;
+      height: 1680px;
+    }
+    .message-section {
+      font-size: 150px;
+	margin-top: 0px; /* Adjust the margin-top value to move the scrolling message higher */
+    }
+    marquee {
+      padding: 10px 0;
+    }
+  </style>
+</head>
+<body>
+  <h1>ALAMINOS (LAGUNA) WATER DISTRICT</h1>
+  <div class="container">
+    <div class="queue-section">
+      <h2 class="now-serving">NOW SERVING</h2> <!-- Added class -->
+      <div class="section">
+        <h2 id="window1Label">Window 1</h2>
+        <h2 id="window1Number">000</h2>
+      </div>
+      <div class="section">
+        <h2 id="window2Label">Window 2</h2>
+        <h2 id="window2Number">000</h2>
+      </div>
+      <div class="section">
+        <h2 id="cashier2Label">Cashier 1</h2>
+        <h2 id="cashier2Number">000</h2>
+      </div>
+      <div class="section">
+        <h2 id="cashier3Label">Cashier 2</h2>
+        <h2 id="cashier3Number">000</h2>
+      </div>
+    </div>
+    <div class="video-section">
+      <video src="Video2.mp4" autoplay loop muted></video> <!-- Replace "Video.mp4" with your actual video file path -->
+    </div>
+  </div>
+  
+  <div class="message-section">
+    <marquee behavior="scroll" direction="left">
+      <h3 id="scrollingMessage">Alaminos (Laguna) Water District M. H. Del Pilar St. Alaminos, Laguna 4001_________Tel.: (049) 567-1432_________Fax: (049) 567-1432_______Cellphone No.: 0995-163-1261________Email: alaminoslagunawaterdistrict@yahoo.com_______waterdistrictalaminoslaguna@gmail.com </h3>
+    </marquee>
+  </div>
+
+  <script>
+    let sharedNumber = 0;
+    let sharedNumber1 = 0;
+    let lastChangedElementId = null;
+    let isCooldown = false;
+    let video = document.querySelector('video');
+
+    document.addEventListener('keydown', function(event) {
+      if (isCooldown) return; // Ignore key presses during cooldown
+
+      const key = event.key;
+      if (key === '1') {
+        sharedNumber = (sharedNumber % 100) + 1;
+        updateNumber('window1Number', sharedNumber);
+        playSound('wind1.mp3');
+        setTimeout(function() {
+          playSound(sharedNumber.toString().padStart(3, '0') + '.mp3');
+        }, 6000);
+        highlightElement('window1Label');
+      } else if (key === '2') {
+        sharedNumber = (sharedNumber % 100) + 1;
+        updateNumber('window2Number', sharedNumber);
+        playSound('wind2.mp3');
+        setTimeout(function() {
+          playSound(sharedNumber.toString().padStart(3, '0') + '.mp3');
+        }, 6000);
+        highlightElement('window2Label');
+      } else if (key === '7') {
+        sharedNumber1 = (sharedNumber1 % 100) + 1;
+        updateNumber('cashier2Number', sharedNumber1);
+        playSound('cash1.mp3');
+        setTimeout(function() {
+          playSound(sharedNumber1.toString().padStart(3, '0') + '.mp3');
+        }, 6000);
+        highlightElement('cashier2Label');
+      } else if (key === '8') {
+        sharedNumber1 = (sharedNumber1 % 100) + 1;
+        updateNumber('cashier3Number', sharedNumber1);
+        playSound('cash2.mp3');
+        setTimeout(function() {
+          playSound(sharedNumber1.toString().padStart(3, '0') + '.mp3');
+        }, 6000);
+        highlightElement('cashier3Label');
+      } else if (key === '4') {
+        updateNumber('window1Number', 'CTSL');
+        playSound('snr.mp3');
+        highlightElement('window1Label');
+      } else if (key === '/') {
+        updateNumber('cashier2Number', 'CTSL');
+        playSound('snr1.mp3');
+        highlightElement('cashier2Label');
+      } else if (key === '5') {
+        updateNumber('window2Number', 'CTSL');
+        playSound('snr3.mp3');
+        highlightElement('window2Label');
+      } else if (key === '*') {
+        updateNumber('cashier3Number', 'CTSL');
+        playSound('snr2.mp3');
+        highlightElement('cashier3Label');
+      } else if (key === '.') {
+        playSound('rmd.mp3');
+      }
+
+      isCooldown = true; // Start cooldown
+      setTimeout(() => {
+        isCooldown = false; // End cooldown after 3 seconds
+      }, 3000);
+    });
+
+    function updateNumber(elementId, number) {
+      document.getElementById(elementId).textContent = number.toString().padStart(3, '0');
+    }
+
+    function playSound(soundFile) {
+      const audio = new Audio(soundFile);
+      audio.play();
+      if (video && !audio.paused) {
+        video.muted = true; // Mute the video when a sound is playing
+        audio.addEventListener('ended', function() {
+          video.muted = false; // Unmute the video when the sound finishes
+        });
+      }
+    }
+
+    function highlightElement(elementId) {
+      if (lastChangedElementId) {
+        document.getElementById(lastChangedElementId).classList.remove('highlight');
+        document.getElementById(lastChangedElementId.replace('Label', 'Number')).classList.remove('highlight');
+      }
+      document.getElementById(elementId).classList.add('highlight');
+      document.getElementById(elementId.replace('Label', 'Number')).classList.add('highlight');
+      lastChangedElementId = elementId;
+    }
+  </script>
+</body>
+</html>
