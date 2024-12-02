@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Queue Machine</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      text-align: center;
+      margin: 0;
+      padding: 0;
+      background-image: url(officeBG.jpg);
+      background-position: center;
+      background-size: 100% 120%;	
+      background-repeat: no-repeat;
+      background-color: #87BEEB; /* Specify the background color here */
+    }
+    .container {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+    .queue-section {
+      text-align: left;
+      margin-right: 450px;
+    }
+    h1 {
+      color: white;
+      font-size: 230px;
+      margin-bottom: -50px;
+    }
+    h2 {
+      color: black;
+      font-size: 350px;
+      border: 5px solid black;
+      padding: 10px;
+      margin: 10px;
+      display: inline-block;
+    }
+    .section {
+      margin-bottom: 20px;
+    }
+    .now-serving {
+      font-size: 150px;
+      color: Bluess;
+      border: none; /* Remove the border */
+    }
+    .highlight {
+      background-color: #88FF0C;
+      transition: all 0.3s;
+    }
+    .video-section {
+  margin-left:-15px; /* Adjust the left margin to move the video to the right */
+  margin-top: -10px; /* Adjust the top margin to move the video down */
+}
+    video {
+      width: 2440px;
+      height: 2080px;
+    }
+    .message-section {
+      font-size: 150px;
+	  color: yellow;
+	margin-top: -3
+5px; /* Adjust the margin-top value to move the scrolling message higher */
+    }
+    marquee {
+      padding: 10px 0;
+    }
+	.current-time {
+    margin-top: -500px;
+    margin-right: 150px;
+    color: yellow;
+    text-align: right;
+    font-size: 230px;
+    font-family: 'LCD Mono', monospace; /* Use LCD Mono font */
+    font-weight: normal; /* You may adjust this based on your preference */
+    font-style: normal; /* Segmented LCD fonts are usually not italicized */
+}
+  </style>
+</head>
+<body>
+  <h1>ALAMINOS (LAGUNA) WATER DISTRICT</h1>
+  <div class="container">
+    <div class="queue-section">
+      <h2 class="now-serving">NOW SERVING</h2> <!-- Added class -->
+      <div class="section">
+        <h2 id="window1Label">Window 1</h2>
+        <h2 id="window1Number">000</h2>
+      </div>
+      <div class="section">
+        <h2 id="window2Label">Window 2</h2>
+        <h2 id="window2Number">000</h2>
+      </div>	  
+ 
+      <div class="section">
+        <h2 id="cashier1Label">Cashier 1</h2>
+        <h2 id="cashier1Number">000</h2>
+      </div>
+      <div class="section">
+        <h2 id="cashier2Label">Cashier 2</h2>
+        <h2 id="cashier2Number">000</h2>
+      </div>
+     <div class="section">
+        <h2 id="cashier3Label">Cashier 3</h2>
+        <h2 id="cashier3Number">000</h2>
+      </div>	  
+    </div>
+    <div class="video-section">
+      <video src="Video1.mp4" autoplay loop muted></video> <!-- Replace "Video.mp4" with your actual video file path -->
+    </div>
+  </div>
+  
+   <div class="current-time">
+        <p id="currentTime"></p>
+    </div>
+	 <div class="message-section">
+    <marquee behavior="scroll" direction="left" scrollamount="50">
+      <h3 id="scrollingMessage">Alaminos (Laguna) Water District M. H. Del Pilar St. Alaminos, Laguna 4001_________Tel.: (049) 567-1432_________Fax: (049) 567-1432_______Cellphone No.: 0995-163-1261________Email: alaminoslagunawaterdistrict@yahoo.com_______waterdistrictalaminoslaguna@gmail.com </h3>
+    </marquee>
+  </div>
+  <script>
+    let sharedNumber = 300;
+    let sharedNumber1 = 0;
+    let PriorityNumber = 200;
+    let PriorityNumber1 = 400;
+    let lastChangedElementId = null;
+    let isCooldown = false;
+    let video = document.querySelector('video');
+
+    document.addEventListener('keydown', function(event) {
+      if (isCooldown) return; // Ignore key presses during cooldown
+
+      const key = event.key;
+      if (key === '1') {
+        sharedNumber = (sharedNumber % 348) + 1;
+	if (sharedNumber < 300) {
+    	sharedNumber = 301;
+ 	 }
+        updateNumber('window1Number', sharedNumber);
+
+        playSound('wind1.mp3');
+        setTimeout(function() {
+          playSound(sharedNumber.toString().padStart(3, '0') + '.mp3');
+        }, 6000);
+        highlightElement('window1Label');
+      } else if (key === '2') {
+        sharedNumber = (sharedNumber % 348) + 1;
+	if (sharedNumber < 300) {
+    	sharedNumber = 301;
+ 	 }
+        updateNumber('window2Number', sharedNumber);
+        playSound('wind2.mp3');
+        setTimeout(function() {
+          playSound(sharedNumber.toString().padStart(3, '0') + '.mp3');
+        }, 6000);
+        highlightElement('window2Label');
+      } 
+	  else if (key === '7') {
+        sharedNumber1 = (sharedNumber1 % 100) + 1;
+        updateNumber('cashier1Number', sharedNumber1);
+        playSound('cash1.mp3');
+        setTimeout(function() {
+          playSound(sharedNumber1.toString().padStart(3, '0') + '.mp3');
+        }, 6000);
+        highlightElement('cashier1Label');
+      } else if (key === '8') {
+        sharedNumber1 = (sharedNumber1 % 100) + 1;
+        updateNumber('cashier2Number', sharedNumber1);
+        playSound('cash2.mp3');
+        setTimeout(function() {
+          playSound(sharedNumber1.toString().padStart(3, '0') + '.mp3');
+        }, 6000);
+        highlightElement('cashier2Label');
+      } else if (key === '4') {
+	PriorityNumber1 = (PriorityNumber1 % 448) + 1;
+	if (PriorityNumber1 < 400) {
+    	PriorityNumber1 = 400;
+ 	 }
+        updateNumber('window1Number', PriorityNumber1);
+        playSound('wind1.mp3');
+        setTimeout(function() {
+          playSound(PriorityNumber1.toString().padStart(3, '0') + '.mp3');
+        }, 6000)
+        highlightElement('window1Label');
+      } else if (key === '/') {
+	PriorityNumber = (PriorityNumber % 224) + 1;
+        updateNumber('cashier2Number', PriorityNumber);
+	if (PriorityNumber < 200) {
+    	PriorityNumber = 201;
+ 	 }
+        playSound('cash1.mp3');
+        setTimeout(function() {
+          playSound(PriorityNumber.toString().padStart(3, '0') + '.mp3');
+        }, 6000);
+        highlightElement('cashier2Label');
+      } else if (key === '5') {
+		sharedNumber1 = (sharedNumber1 % 100) + 1;
+
+        updateNumber('cashier3Number', sharedNumber1);
+        playSound('cash3.mp3');
+        setTimeout(function() {
+          playSound(sharedNumber1.toString().padStart(3, '0') + '.mp3');
+        }, 7500);
+        highlightElement('cashier3Label');
+      } else if (key === '*') {
+	PriorityNumber = (PriorityNumber % 224) + 1;
+        updateNumber('cashier3Number', PriorityNumber);
+        if (PriorityNumber < 200) {
+    	PriorityNumber = 201;
+ 	 }
+        playSound('cash2.mp3');
+        setTimeout(function() {
+          playSound(PriorityNumber.toString().padStart(3, '0') + '.mp3');
+        }, 6000);
+        highlightElement('cashier3Label');
+      } else if (key === '.') {
+        playSound('rmd.mp3');
+      }
+
+      isCooldown = true; // Start cooldown
+      setTimeout(() => {
+        isCooldown = false; // End cooldown after 3 seconds
+      }, 1500);
+    });
+
+    function updateNumber(elementId, number) {
+      document.getElementById(elementId).textContent = number.toString().padStart(3, '0');
+    }
+
+    function playSound(soundFile) {
+      const audio = new Audio(soundFile);
+      audio.play();
+      if (video && !audio.paused) {
+        video.muted = true; // Mute the video when a sound is playing
+        audio.addEventListener('ended', function() {
+          video.muted = false; // Unmute the video when the sound finishes
+        });
+      }
+    }
+
+    function highlightElement(elementId) {
+      if (lastChangedElementId) {
+        document.getElementById(lastChangedElementId).classList.remove('highlight');
+        document.getElementById(lastChangedElementId.replace('Label', 'Number')).classList.remove('highlight');
+      }
+      document.getElementById(elementId).classList.add('highlight');
+      document.getElementById(elementId.replace('Label', 'Number')).classList.add('highlight');
+      lastChangedElementId = elementId;
+    }
+function updateTime() {
+    var now = new Date();
+    var hours = now.getHours();
+    var minutes = now.getMinutes();
+    var seconds = now.getSeconds();
+    var ampm = hours >= 12 ? 'PM' : 'AM';
+
+    // Convert to 12-hour format
+    hours = hours % 12 || 12;
+
+    // Add leading zero if needed
+    hours = (hours < 10) ? "0" + hours : hours;
+    minutes = (minutes < 10) ? "0" + minutes : minutes;
+    seconds = (seconds < 10) ? "0" + seconds : seconds;
+
+    var currentTimeString = hours + ":" + minutes + ":" + seconds + " " + ampm;
+
+    // Format date
+    var days = ['Sun', 'Mon', 'Tue', 'Wed', 'Thur', 'Fri', 'Sat'];
+    var day = days[now.getDay()];
+    var date = now.getDate();
+    var month = now.getMonth() + 1; // Months are zero-based
+    var year = now.getFullYear() % 100; // Extract last two digits
+
+    var dateString = day + ',' + month.toString().padStart(2, '0') + '/' + date.toString().padStart(2, '0') + '/' + year.toString().padStart(2, '0');
+
+    document.getElementById("currentTime").textContent = currentTimeString + "-" + dateString;
+}
+
+// Update the time every second
+setInterval(updateTime, 1000);
+
+// Initial update
+updateTime();
+  </script>
+</body>
+</html>
